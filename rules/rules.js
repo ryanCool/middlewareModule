@@ -58,7 +58,7 @@ function removeQuery(data) {
 
 function checkAgent(data) {
     if (data.method === 'POST' || data.method === 'PUT') {
-        if (!('X-SHOPBACK-AGENT'.toLowerCase() in data.headers)) {
+        if (!('x-shopback-agent' in data.headers)) {
             throw new Error('agent not exist');
         }
     }
@@ -76,10 +76,18 @@ function checkContentType(data) {
 }
 
 function deletePermission(data) {
+    if (data.method === 'DELETE') {
+        if (data.headers['x-shopback-agent'] !== 'AGENT_1') {
+            throw new Error('agent do not have permission');
+        }
+    }
     return data;
 }
 
 function addTimestamp(data) {
+    const result = data;
+    result.headers["​X-SHOPBACK-TIMESTAMP"] = Date.now();
+
     return data;
 }
 
