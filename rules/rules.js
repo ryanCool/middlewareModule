@@ -38,7 +38,6 @@ function rule10(data) {
     return data;
 }
 
-
 const dict = {
     1: rule1,
     2: rule2,
@@ -65,8 +64,6 @@ const config = {
     9: true,
     10: true,
 };
-
-
 
 module.exports = {
     config,
