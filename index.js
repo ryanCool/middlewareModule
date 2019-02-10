@@ -1,7 +1,33 @@
 const YAML = require('yamljs');
-// const yamlLint = require('yaml-lint');
 const fs = require('fs');
 const rules = require('./rules/rules');
+
+function genData(data, ruleSwitchOption) {
+    let result = data;
+    Object.keys(result.headers).forEach((key) => {
+        const tmp = data.headers[key]
+        delete result.headers[key];
+        // Header is case-insensitive , so we transfer to lower case .
+        result.headers[key.toLowerCase()] = tmp;
+    });
+    // Default config
+    const ruleCheck = rules.config;
+    // User custom config
+    if (ruleSwitchOption) {
+        Object.keys(ruleSwitchOption).forEach((key) => {
+            ruleCheck[key] = ruleSwitchOption[key];
+        });
+    }
+
+    // transform request by rules
+    Object.keys(ruleCheck).forEach((key) => {
+        if (ruleCheck[key]) {
+            result = rules.dict[key](result);
+        }
+    });
+
+    return result;
+}
 
 function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
     let jsonData;
@@ -18,32 +44,19 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
         throw new Error('yaml format invalid');
     }
 
-    let data = yamlData;
-    Object.keys(data.headers).forEach((key) => {
-        const tmp = data.headers[key];
-        delete data.headers[key];
-        // Header is case-insensitive , so we transfer to lower case .
-        data.headers[key.toLowerCase()] = tmp;
-    });
-    // Default config
-    const ruleCheck = rules.config;
-    // User custom config
-    if (ruleSwitchOption) {
-        Object.keys(ruleSwitchOption).forEach((key) => {
-            ruleCheck[key] = ruleSwitchOption[key];
-        });
-    }
 
-    // transform request by rules
-    Object.keys(ruleCheck).forEach((key) => {
-        if (ruleCheck[key]) {
-            data = rules.dict[key](data);
-        }
+    const resultJson = JSON.stringify(genData(jsonData, ruleSwitchOption), null, 4);
+    const resultYaml = YAML.stringify(genData(yamlData, ruleSwitchOption));
+
+    fs.mkdir('./result', { recursive: true }, (err) => {
+        if (err) throw err;
+        fs.writeFileSync('./result/result.json', resultJson);
+
+        fs.writeFileSync('./result/result.yaml', resultYaml);
     });
 
-    return [yamlData, jsonData, null];
+
+    return [resultYaml, resultJson];
 }
-
-shopbackMiddleware('./data/rule6.yaml', './data/rule6.json', { 1: true });
 
 module.exports = shopbackMiddleware;
