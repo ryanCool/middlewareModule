@@ -1,70 +1,42 @@
 const YAML = require('yamljs');
-const fs = require("fs");
-var ruleDict = {
-    1: rule1,
-    2: rule2,
-    3: rule3,
-    4: rule4,
-    5: rule5,
-    6: rule6,
-    7: rule7,
-    8: rule8,
-    9: rule9,
-    10: rule10,
+// const yamlLint = require('yaml-lint');
+const fs = require('fs');
+const rules = require('./rules/rules');
+
+
+function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
+    var jsonData, yamlData
+    try {
+        jsonData = JSON.parse(fs.readFileSync(jsonFile).toString());
+    } catch (e) {
+        console.log("json format invalid");
+        return
+    }
+
+    try {
+        yamlData = YAML.parse(fs.readFileSync(yamlFile).toString());
+    } catch (e) {
+        console.log("yaml format invalid");
+        return
+    }
+
+
+    let data = yamlData;
+    //Default config
+    let ruleCheck = rules.config;
+    if (ruleSwitchOption) {
+        ruleCheck = ruleSwitchOption;
+    }
+
+    Object.keys(ruleCheck).forEach((key) => {
+        if (ruleCheck[key]) {
+            data = rules.dict[key](data);
+        }
+    });
+
+    return [yamlData, jsonData, null];
 }
 
+module.exports = shopbackMiddleware;
 
-//Default is all true for list rules
-var ruleConfig = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true };
-
-module.exports = function(yamlFile, jsonFile, ruleSwitchOption) {
-    var yamlData = YAML.parse(fs.readFileSync(yamlFile).toString());
-    var jsonData = JSON.parse(fs.readFileSync(jsonFile).toString());
-
-
-
-
-    return yamlResult, jsonResult, null
-};
-
-
-
-function rule1(data) {
-    return data
-}
-
-function rule2(data) {
-    return data
-}
-
-function rule3(data) {
-    return data
-}
-
-function rule4(data) {
-    return data
-}
-
-function rule5(data) {
-    return data
-}
-
-function rule6(data) {
-    return data
-}
-
-function rule7(data) {
-    return data
-}
-
-function rule1(data) {
-    return data
-}
-
-function rule1(data) {
-    return data
-}
-
-function rule1(data) {
-    return data
-}
+shopbackMiddleware('input.yaml', 'input.json');
