@@ -25,7 +25,6 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
         // Header is case-insensitive , so we transfer to lower case .
         data.headers[key.toLowerCase()] = tmp;
     });
-    // console.log("data=", data);
     // Default config
     const ruleCheck = rules.config;
     // User custom config
@@ -41,8 +40,6 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
             data = rules.dict[key](data);
         }
     });
-
-    // console.log(data);
 
     return [yamlData, jsonData, null];
 }

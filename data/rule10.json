@@ -1,0 +1,11 @@
+{
+    "url": "http://www.shopback.com/shopback/api/users?q=1",
+    "method": "DELETE",
+    "headers":
+    {
+        "Cookie": "name=value; name2=value2; name3=value3",
+        "Content-Type": "application/json",
+        "X-SHOPBACK-AGENT": "AGENT_1",
+        "referer": "www.shopback.com"
+    }
+}

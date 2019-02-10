@@ -86,12 +86,16 @@ function deletePermission(data) {
 
 function addTimestamp(data) {
     const result = data;
-    result.headers["​X-SHOPBACK-TIMESTAMP"] = Date.now();
+    result.headers['X-SHOPBACK-TIMESTAMP'] = Date.now();
 
     return data;
 }
 
 function checkDomain(data) {
+    if (!(data.url.includes('www.shopback.com'))) {
+        throw new Error('wrong domain for request');
+    }
+
     return data;
 }
 
