@@ -55,7 +55,14 @@ function removeQuery(data) {
     return result;
 }
 
+
 function checkAgent(data) {
+    if (data.method === 'POST' || data.method === 'PUT') {
+        if (!('X-SHOPBACK-AGENT'.toLowerCase() in data.headers)) {
+            throw new Error('agent not exist');
+        }
+    }
+
     return data;
 }
 

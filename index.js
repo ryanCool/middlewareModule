@@ -47,6 +47,6 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
     return [yamlData, jsonData, null];
 }
 
-shopbackMiddleware('./data/rule4.yaml', './data/rule4.json', { 1: true });
+shopbackMiddleware('./data/rule6.yaml', './data/rule6.json', { 1: true });
 
 module.exports = shopbackMiddleware;
