@@ -1,0 +1,11 @@
+{
+    "url": "http://www.shopback.com/shopback/me?q=1",
+    "method": "GET",
+    "headers":
+    {
+        "Cookie": "sbcookie=value; name2=value2; name3=value3",
+        "Content-Type": "application/json",
+        "X-SHOPBACK-AGENT": "anything",
+        "referer": "www.shopback.com"
+    }
+}

@@ -18,8 +18,14 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
         throw new Error('yaml format invalid');
     }
 
-
     let data = yamlData;
+    Object.keys(data.headers).forEach((key) => {
+        const tmp = data.headers[key];
+        delete data.headers[key];
+        // Header is case-insensitive , so we transfer to lower case .
+        data.headers[key.toLowerCase()] = tmp;
+    });
+    // console.log("data=", data);
     // Default config
     const ruleCheck = rules.config;
     // User custom config
@@ -41,6 +47,6 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
     return [yamlData, jsonData, null];
 }
 
-// shopbackMiddleware('./data/rule2.yaml', './data/rule2.json', { 1: true, 3: false });
+shopbackMiddleware('./data/rule4.yaml', './data/rule4.json', { 1: true });
 
 module.exports = shopbackMiddleware;

@@ -1,14 +1,14 @@
 function modifyPath(data) {
     const result = data;
-    if (data.method.toLowerCase() === 'get') {
+    if (data.method === 'GET') {
         result.url = data.url.replace('/shopback/resource', '/shopback/static/assets');
     }
     return result;
 }
 
 function checkSbcookie(data) {
-    if (data.method.toLowerCase() === 'get' && data.url.includes('/shopback/me')) {
-        const kvPairs = data.headers.Cookie.split(';');
+    if (data.method === 'GET' && data.url.includes('/shopback/me')) {
+        const kvPairs = data.headers.cookie.split(';');
         let found = false;
         kvPairs.forEach((pair) => {
             const index = pair.indexOf('=');
@@ -18,7 +18,7 @@ function checkSbcookie(data) {
                 found = true;
             }
         });
-        if (!found) {
+        if (found === false) {
             throw new Error('request dont exist sbcookie');
         }
     }
@@ -26,15 +26,33 @@ function checkSbcookie(data) {
 }
 
 function checkRefererHeader(data) {
+    if (data.method === 'GET') {
+        if (data.headers.referer.toLowerCase().includes('www.shopback.com') === false) {
+            throw new Error('request not referer from www.shopback.com​​');
+        }
+    }
     return data;
 }
 
 function addFrom(data) {
-    return data;
+    const result = data;
+    if (data.method === 'GET') {
+        if (data.url.toLowerCase().includes('/shopback/api/') === true) {
+            result.headers.from = '​hello@shopback.com';
+        }
+    }
+    return result;
 }
 
 function removeQuery(data) {
-    return data;
+    const result = data;
+    if (data.method === 'POST' || data.method === 'PUT') {
+        const index = data.url.indexOf('?');
+        const newurl = data.url.substr(0, index);
+        result.url = newurl;
+    }
+
+    return result;
 }
 
 function checkAgent(data) {
