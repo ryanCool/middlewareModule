@@ -1,8 +1,15 @@
 {
     "extends": "airbnb-base",
+    "env":
+    {
+        "mocha": true
+    },
     "rules":
     {
         "indent": "off",
-        "eol-last": "off"
+        "eol-last": "off",
+        "padded-blocks": "off",
+        "operator-linebreak": "off",
+        "no-param-reassign": "off"
     }
 }

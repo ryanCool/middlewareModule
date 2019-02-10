@@ -1,24 +1,40 @@
+const getMethod = 'GET';
+const postMethod = 'POST';
+const putMethod = 'PUT';
+const deleteMethod = 'DELETE';
+const sbcookie = 'sbcookie';
+const sbcookieValid = 'sbcookieValue';
+const mePath = '/shopback/me';
+const shopbackDomain = 'www.shopback.com';
+const resourcePath = '/shopback/resource';
+const staticPath = '/shopback/static/assets';
+const agentHeaderKey = 'x-shopback-agent';
+const shopbackSupportMail = '​hello@shopback.com';
+const deleteAuthAgents = ['AGENT_1'];
+
 function modifyPath(data) {
     const result = data;
-    if (data.method === 'GET') {
-        result.url = data.url.replace('/shopback/resource', '/shopback/static/assets');
+    if (data.method === getMethod) {
+        result.url = data.url.replace(resourcePath, staticPath);
     }
     return result;
 }
 
 function checkSbcookie(data) {
-    if (data.method === 'GET' && data.url.includes('/shopback/me')) {
+    if (data.method === getMethod && data.url.includes(mePath)) {
         const kvPairs = data.headers.cookie.split(';');
         let found = false;
+        let value;
         kvPairs.forEach((pair) => {
             const index = pair.indexOf('=');
             const key = pair.substr(0, index);
-            // const value = pair.substr(0, index);
-            if (key.toLowerCase() === 'sbcookie') {
+            if (key.toLowerCase() === sbcookie) {
+                value = pair.substr(index + 1);
                 found = true;
             }
         });
-        if (found === false) {
+
+        if (found === false || (sbcookieValid !== value || sbcookieValid === 'anything')) {
             throw new Error('request dont exist sbcookie');
         }
     }
@@ -26,8 +42,12 @@ function checkSbcookie(data) {
 }
 
 function checkRefererHeader(data) {
-    if (data.method === 'GET') {
-        if (data.headers.referer.toLowerCase().includes('www.shopback.com') === false) {
+    if (data.method === getMethod) {
+        if (data.headers.referer === undefined) {
+            throw new Error('request not referer from www.shopback.com​​');
+        }
+
+        if (data.headers.referer.toLowerCase().includes(shopbackDomain) === false) {
             throw new Error('request not referer from www.shopback.com​​');
         }
     }
@@ -36,9 +56,12 @@ function checkRefererHeader(data) {
 
 function addFrom(data) {
     const result = data;
-    if (data.method === 'GET') {
+    if (data.method === getMethod) {
+        if (data.url === undefined) {
+            throw new Error('url invalid');
+        }
         if (data.url.toLowerCase().includes('/shopback/api/') === true) {
-            result.headers.from = '​hello@shopback.com';
+            result.headers.from = shopbackSupportMail;
         }
     }
     return result;
@@ -46,7 +69,7 @@ function addFrom(data) {
 
 function removeQuery(data) {
     const result = data;
-    if (data.method === 'POST' || data.method === 'PUT') {
+    if (data.method === postMethod || data.method === putMethod) {
         const index = data.url.indexOf('?');
         const newurl = data.url.substr(0, index);
         result.url = newurl;
@@ -57,9 +80,9 @@ function removeQuery(data) {
 
 
 function checkAgent(data) {
-    if (data.method === 'POST' || data.method === 'PUT') {
-        if (!('x-shopback-agent' in data.headers)) {
-            throw new Error('agent not exist');
+    if (data.method === postMethod || data.method === putMethod) {
+        if (!(agentHeaderKey in data.headers)) {
+            throw new Error('agent header not exist');
         }
     }
 
@@ -67,8 +90,8 @@ function checkAgent(data) {
 }
 
 function checkContentType(data) {
-    if (data.method === 'POST' || data.method === 'PUT') {
-        if (data.headers['content-type'].toLowerCase() !== 'application/json') {
+    if (data.method === postMethod || data.method === putMethod) {
+        if (data.headers['content-type'] !== 'application/json') {
             throw new Error('content-type header invalid');
         }
     }
@@ -76,8 +99,10 @@ function checkContentType(data) {
 }
 
 function deletePermission(data) {
-    if (data.method === 'DELETE') {
-        if (data.headers['x-shopback-agent'] !== 'AGENT_1') {
+    if (data.method === deleteMethod) {
+        // If no agent in array , we do not check auth
+        if ((deleteAuthAgents.indexOf(data.headers[agentHeaderKey]) === -1) &&
+            (deleteAuthAgents.length) > 0) {
             throw new Error('agent do not have permission');
         }
     }
@@ -92,7 +117,7 @@ function addTimestamp(data) {
 }
 
 function checkDomain(data) {
-    if (!(data.url.includes('www.shopback.com'))) {
+    if (!(data.url.includes(shopbackDomain))) {
         throw new Error('wrong domain for request');
     }
 
@@ -129,4 +154,5 @@ const config = {
 module.exports = {
     config,
     dict,
+    shopbackSupportMail,
 };

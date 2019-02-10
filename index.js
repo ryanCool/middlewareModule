@@ -5,7 +5,7 @@ const rules = require('./rules/rules');
 function genData(data, ruleSwitchOption) {
     let result = data;
     Object.keys(result.headers).forEach((key) => {
-        const tmp = data.headers[key]
+        const tmp = data.headers[key];
         delete result.headers[key];
         // Header is case-insensitive , so we transfer to lower case .
         result.headers[key.toLowerCase()] = tmp;
@@ -44,9 +44,11 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
         throw new Error('yaml format invalid');
     }
 
+    const jsonRes = genData(jsonData, ruleSwitchOption);
+    const yamlRes = genData(yamlData, ruleSwitchOption);
 
-    const resultJson = JSON.stringify(genData(jsonData, ruleSwitchOption), null, 4);
-    const resultYaml = YAML.stringify(genData(yamlData, ruleSwitchOption));
+    const resultJson = JSON.stringify(jsonRes, null, 4);
+    const resultYaml = YAML.stringify(yamlRes);
 
     fs.mkdir('./result', { recursive: true }, (err) => {
         if (err) throw err;
@@ -56,7 +58,7 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
     });
 
 
-    return [resultYaml, resultJson];
+    return [jsonData, yamlData];
 }
 
 module.exports = shopbackMiddleware;

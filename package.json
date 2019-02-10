@@ -10,10 +10,13 @@
   "devDependencies": {
     "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.16.0"
+    "eslint-plugin-import": "^2.16.0",
+    "mocha": "^5.2.0",
+    "should": "^13.2.3"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./demo",
+    "test": "./node_modules/mocha/bin/mocha ./tests/"
   },
   "repository": {
     "type": "git",
