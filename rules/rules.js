@@ -67,6 +67,11 @@ function checkAgent(data) {
 }
 
 function checkContentType(data) {
+    if (data.method === 'POST' || data.method === 'PUT') {
+        if (data.headers['content-type'].toLowerCase() !== 'application/json') {
+            throw new Error('content-type header invalid');
+        }
+    }
     return data;
 }
 
