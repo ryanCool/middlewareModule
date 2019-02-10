@@ -1,54 +1,73 @@
-function rule1(data) {
+function modifyPath(data) {
+    const result = data;
+    if (data.method.toLowerCase() === 'get') {
+        result.url = data.url.replace('/shopback/resource', '/shopback/static/assets');
+    }
+    return result;
+}
+
+function checkSbcookie(data) {
+    if (data.method.toLowerCase() === 'get' && data.url.includes('/shopback/me')) {
+        const kvPairs = data.headers.Cookie.split(';');
+        let found = false;
+        kvPairs.forEach((pair) => {
+            const index = pair.indexOf('=');
+            const key = pair.substr(0, index);
+            // const value = pair.substr(0, index);
+            if (key.toLowerCase() === 'sbcookie') {
+                found = true;
+            }
+        });
+        if (!found) {
+            throw new Error('request dont exist sbcookie');
+        }
+    }
     return data;
 }
 
-function rule2(data) {
+function checkRefererHeader(data) {
     return data;
 }
 
-function rule3(data) {
+function addFrom(data) {
     return data;
 }
 
-function rule4(data) {
+function removeQuery(data) {
     return data;
 }
 
-function rule5(data) {
+function checkAgent(data) {
     return data;
 }
 
-function rule6(data) {
+function checkContentType(data) {
     return data;
 }
 
-function rule7(data) {
+function deletePermission(data) {
     return data;
 }
 
-function rule8(data) {
+function addTimestamp(data) {
     return data;
 }
 
-function rule9(data) {
-    return data;
-}
-
-function rule10(data) {
+function checkDomain(data) {
     return data;
 }
 
 const dict = {
-    1: rule1,
-    2: rule2,
-    3: rule3,
-    4: rule4,
-    5: rule5,
-    6: rule6,
-    7: rule7,
-    8: rule8,
-    9: rule9,
-    10: rule10,
+    1: modifyPath,
+    2: checkSbcookie,
+    3: checkRefererHeader,
+    4: addFrom,
+    5: removeQuery,
+    6: checkAgent,
+    7: checkContentType,
+    8: deletePermission,
+    9: addTimestamp,
+    10: checkDomain,
 };
 
 // Default is all true for list rules
