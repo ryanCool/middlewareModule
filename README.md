@@ -17,15 +17,22 @@ User is free to choose rules to run.
  /result/reuslt.yaml
 ```
 
+### Function usage
+```js
+middleware(yamlfilePath, jsonfilePath, { 3: false, 6: false });
+The third argument is optional. 
+User can choose which rules need to check or not.
+
+```
 
 ### Defaults rules config
 ./rules/rules.js
 ```js
 Default config is all check.
 
-user can custom their own config like this
+user can custom their own config in rules.js, and also pass switch dictionary in function.
 
-middleware(file, file, { 3: false, 6: false });
+middleware(filePath, filePath, { 3: false, 6: false });
 
 ```
 
