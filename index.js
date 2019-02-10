@@ -9,14 +9,14 @@ function shopbackMiddleware(yamlFile, jsonFile, ruleSwitchOption) {
     try {
         jsonData = JSON.parse(fs.readFileSync(jsonFile).toString());
     } catch (e) {
-        console.log("json format invalid");
+        console.log("json format invalid:", e);
         return
     }
 
     try {
         yamlData = YAML.parse(fs.readFileSync(yamlFile).toString());
     } catch (e) {
-        console.log("yaml format invalid");
+        console.log("yaml format invalid:", e);
         return
     }
 
